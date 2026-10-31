@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /thank-you.html
+
+# Replace with your live URL
+Sitemap: https://your-username.github.io/your-repo/sitemap.xml
