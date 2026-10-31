@@ -55,6 +55,24 @@ Only publish real client reviews.
 2. Edit the title, meta description, `headline` and `datePublished` in the Article schema, and the content.
 3. Add a card to `blog.html` and a line to `sitemap.xml`.
 
+## Industry pages (350 niches)
+
+Built from `tools/categories.json` (your categories PDF):
+
+- `industries.html`: index of all industries
+- `seo-for-<category>.html`: 20 category hub pages
+- `seo-for-<niche>.html`: 350 niche pages (for example `seo-for-dental-clinics.html`)
+
+Every niche page has its own title, description, H1/H2 headings based on search terms, search-term table, FAQs (with FAQ schema), breadcrumbs (with schema), a lead form, and links to its category hub, sibling niches, services, country pages and blog posts. The header, bottom bar and footer come from `assets/js/main.js`, so they stay fixed on every page.
+
+### Add or rename a niche
+1. Edit `tools/categories.json`.
+2. Run `python3 tools/generate_niche_pages.py`
+3. Run `python3 tools/make_sitemap.py`
+
+### Sitemap
+`python3 tools/make_sitemap.py` rebuilds `sitemap.xml` and `robots.txt` for every page. It reads `siteUrl` from `assets/js/config.js`, or pass your URL: `python3 tools/make_sitemap.py https://www.yourdomain.com`
+
 ## Pages
 
-Home, Services hub, 5 service pages, 3 country pages (UK, USA, India with hreflang), About, Contact, Thank You, Blog index, 4 blog posts, Privacy Policy, Terms, 404.
+Home, Services hub, 5 service pages, 3 country pages (UK, USA, India with hreflang), About, Contact, Thank You, Blog index, 4 blog posts, Privacy Policy, Terms, 404, Industries index, 20 industry hubs and 350 niche pages (390 URLs in the sitemap).
