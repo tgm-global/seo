@@ -42,6 +42,30 @@
     ["seo-company-usa.html", "SEO Company USA"],
     ["seo-company-india.html", "SEO Company India"]
   ];
+  /* INDUSTRIES:START */
+  var industries = [
+    ["travel-tourism", "Travel & Tourism"],
+    ["healthcare-medical", "Healthcare & Medical"],
+    ["legal-services", "Legal Services"],
+    ["finance-insurance", "Finance & Insurance"],
+    ["real-estate-property", "Real Estate & Property"],
+    ["construction-home-improvement", "Construction & Home Improvement"],
+    ["automotive", "Automotive"],
+    ["education-training", "Education & Training"],
+    ["ecommerce-retail", "Ecommerce & Retail"],
+    ["hospitality-restaurants", "Hospitality & Restaurants"],
+    ["beauty-personal-care", "Beauty & Personal Care"],
+    ["technology-it", "Technology & IT"],
+    ["business-professional-services", "Business & Professional Services"],
+    ["manufacturing-industrial", "Manufacturing & Industrial"],
+    ["logistics-transportation", "Logistics & Transportation"],
+    ["home-personal-services", "Home & Personal Services"],
+    ["fitness-sports-wellness", "Fitness, Sports & Wellness"],
+    ["events-entertainment-media", "Events, Entertainment & Media"],
+    ["pet-services", "Pet Services"],
+    ["specialist-niche-services", "Specialist & Niche Services"]
+  ];
+  /* INDUSTRIES:END */
 
   function navLink(href, label) {
     var cur = href === current || (current === "" && href === "index.html");
@@ -51,6 +75,8 @@
   function buildHeader() {
     var subServices = services.map(function (s) { return "<li>" + navLink(s[0], s[1]) + "</li>"; }).join("");
     var subLoc = locations.map(function (s) { return "<li>" + navLink(s[0], s[1]) + "</li>"; }).join("");
+    var subInd = industries.map(function (s) { return "<li>" + navLink("seo-for-" + s[0] + ".html", s[1]) + "</li>"; }).join("") +
+      '<li><a href="industries.html"><strong>View all industries</strong></a></li>';
     return (
       '<a class="skip-link" href="#main">Skip to content</a>' +
       '<header class="site-header"><div class="container header-inner">' +
@@ -59,6 +85,7 @@
       '<nav id="primary-nav" class="primary-nav" aria-label="Primary"><ul>' +
       "<li>" + navLink("index.html", "Home") + "</li>" +
       '<li class="has-sub">' + navLink("services.html", "Services") + '<ul class="sub">' + subServices + "</ul></li>" +
+      '<li class="has-sub">' + navLink("industries.html", "Industries") + '<ul class="sub sub-wide">' + subInd + "</ul></li>" +
       '<li class="has-sub"><a href="seo-company-usa.html">Locations</a><ul class="sub">' + subLoc + "</ul></li>" +
       "<li>" + navLink("about.html", "About") + "</li>" +
       "<li>" + navLink("blog.html", "Blog") + "</li>" +
@@ -106,6 +133,9 @@
       '<li><a href="' + mailHref + '">' + esc(C.email) + "</a></li>" +
       (addr ? "<li>" + esc(addr) + "</li>" : "") +
       "</ul></div></div>" +
+      '<div class="footer-industries"><h4>Industries We Serve</h4><ul class="footer-pills">' +
+      industries.map(function (x) { return '<li><a href="seo-for-' + x[0] + '.html">' + esc(x[1]) + "</a></li>"; }).join("") +
+      '<li><a href="industries.html"><strong>All industries</strong></a></li></ul></div>' +
       '<div class="footer-bottom"><span>&copy; ' + new Date().getFullYear() + " " + esc(C.companyName) + ". All rights reserved.</span>" +
       '<span><a href="privacy-policy.html">Privacy Policy</a> &middot; <a href="terms.html">Terms</a></span></div>' +
       "</div></footer>"
@@ -326,6 +356,20 @@
     }
     addJsonLd(org);
 
+    var bc = D.querySelector(".breadcrumb");
+    if (bc) {
+      var crumbs = [];
+      var pos = 1;
+      Array.prototype.forEach.call(bc.childNodes, function (n) {
+        if (n.nodeType === 1 && n.tagName === "A") {
+          crumbs.push({ "@type": "ListItem", position: pos++, name: n.textContent.trim(), item: n.href });
+        } else if (n.nodeType === 3 && n.textContent.trim()) {
+          crumbs.push({ "@type": "ListItem", position: pos++, name: n.textContent.trim(), item: pageUrl });
+        }
+      });
+      if (crumbs.length > 1) addJsonLd({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: crumbs });
+    }
+
     // Fill author/publisher for blog Article schema
     var art = D.getElementById("article-ld");
     if (art) {
@@ -353,12 +397,56 @@
     });
   }
 
+  /* ---------- Industry picker (home page) ---------- */
+  function initIndustryPicker() {
+    var holders = D.querySelectorAll("[data-industry-picker]");
+    var data = window.SITE_NICHES || [];
+    if (!holders.length || !data.length) return;
+    function opt(value, text) { var o = D.createElement("option"); o.value = value; o.textContent = text; return o; }
+    Array.prototype.forEach.call(holders, function (h, idx) {
+      var id = "ip" + idx;
+      h.innerHTML =
+        '<form class="industry-picker" novalidate>' +
+        '<div class="ip-text"><h2>Find SEO Services for Your Industry</h2>' +
+        "<p>Select your industry and niche to see search terms, challenges and a tailored SEO plan.</p></div>" +
+        '<div class="ip-row">' +
+        '<div class="field"><label for="' + id + '-cat">Industry category</label><select id="' + id + '-cat"></select></div>' +
+        '<div class="field"><label for="' + id + '-sub">Your niche</label><select id="' + id + '-sub" disabled></select></div>' +
+        '<button class="btn btn-primary" type="submit" disabled>View SEO Services</button>' +
+        "</div></form>";
+      var form = h.querySelector("form");
+      var cat = h.querySelector("#" + id + "-cat");
+      var sub = h.querySelector("#" + id + "-sub");
+      var btn = h.querySelector("button");
+      cat.appendChild(opt("", "Select a category"));
+      data.forEach(function (c, i) { cat.appendChild(opt(String(i), c.name)); });
+      sub.appendChild(opt("", "Select a category first"));
+      cat.addEventListener("change", function () {
+        sub.innerHTML = "";
+        if (cat.value === "") {
+          sub.appendChild(opt("", "Select a category first"));
+          sub.disabled = true; btn.disabled = true;
+          return;
+        }
+        var c = data[Number(cat.value)];
+        sub.appendChild(opt(c.file, "All " + c.name + " niches"));
+        c.niches.forEach(function (n) { sub.appendChild(opt(n[1], n[0])); });
+        sub.disabled = false; btn.disabled = false;
+      });
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!sub.disabled && sub.value) location.href = sub.value;
+      });
+    });
+  }
+
   function init() {
     D.body.insertAdjacentHTML("afterbegin", buildHeader());
     D.body.insertAdjacentHTML("beforeend", buildFooter() + buildStickyFooter());
     applyConfig();
     initForms();
     initTestimonials();
+    initIndustryPicker();
     initNav();
     seoHead();
   }

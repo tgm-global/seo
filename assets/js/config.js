@@ -8,7 +8,7 @@
  */
 window.SITE_CONFIG = {
   // ---- Company ----
-  companyName: "True Gain Media",
+  companyName: "RankNest Digital",
   tagline: "SEO agency for growth-focused businesses in the UK, USA and India",
 
   // Your live URL without a trailing slash.
@@ -17,9 +17,9 @@ window.SITE_CONFIG = {
   siteUrl: "https://your-username.github.io/your-repo",
 
   // ---- Contact details ----
-  phoneDisplay: "+91 98712 30826",   // shown to visitors
-  phoneRaw: "+919871230826",         // used in tel: links (no spaces)
-  whatsappNumber: "919871230826",    // country code + number, digits only
+  phoneDisplay: "+91 98765 43210",   // shown to visitors
+  phoneRaw: "+919876543210",         // used in tel: links (no spaces)
+  whatsappNumber: "919876543210",    // country code + number, digits only
   whatsappMessage: "Hello, I would like to get a free SEO audit for my website.",
   email: "hello@yourdomain.com",
 
