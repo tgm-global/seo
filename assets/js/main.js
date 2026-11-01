@@ -75,8 +75,8 @@
   function buildHeader() {
     var subServices = services.map(function (s) { return "<li>" + navLink(s[0], s[1]) + "</li>"; }).join("");
     var subLoc = locations.map(function (s) { return "<li>" + navLink(s[0], s[1]) + "</li>"; }).join("");
-    var subInd = industries.map(function (s) { return "<li>" + navLink("seo-for-" + s[0] + ".html", s[1]) + "</li>"; }).join("") +
-      '<li><a href="industries.html"><strong>View all industries</strong></a></li>';
+    var subInd = industries.slice(0, 10).map(function (s) { return "<li>" + navLink("seo-for-" + s[0] + ".html", s[1]) + "</li>"; }).join("") +
+      '<li class="show-all"><a href="industries.html"><strong>Show all categories &rarr;</strong></a></li>';
     return (
       '<a class="skip-link" href="#main">Skip to content</a>' +
       '<header class="site-header"><div class="container header-inner">' +
@@ -388,6 +388,19 @@
     var toggle = D.querySelector(".nav-toggle");
     var nav = D.getElementById("primary-nav");
     if (!toggle || !nav) return;
+    Array.prototype.forEach.call(nav.querySelectorAll(".has-sub"), function (li) {
+      var link = li.querySelector("a");
+      var btn = D.createElement("button");
+      btn.type = "button";
+      btn.className = "sub-toggle";
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-label", "Show " + link.textContent.trim() + " submenu");
+      btn.addEventListener("click", function () {
+        var open = li.classList.toggle("open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      link.insertAdjacentElement("afterend", btn);
+    });
     toggle.addEventListener("click", function () {
       var open = nav.classList.toggle("open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
