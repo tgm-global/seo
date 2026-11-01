@@ -289,3 +289,23 @@ th { background: var(--bg); color: var(--navy); }
 .industry-picker select:disabled { background: #f1f4fa; cursor: not-allowed; }
 @media (max-width: 920px) { .industry-picker { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .ip-row { grid-template-columns: 1fr; } .industry-picker { padding: 22px 18px; } }
+
+/* ---------- Header menu fixes ---------- */
+.sub-toggle { display: none; }
+.sub .show-all a { color: var(--blue); }
+@media (min-width: 1081px) {
+  .sub-wide { min-width: 300px; columns: 1; max-height: none; overflow: visible; }
+}
+@media (max-width: 1080px) {
+  /* backdrop-filter would trap the fixed mobile menu inside the 64px header */
+  .site-header { -webkit-backdrop-filter: none; backdrop-filter: none; background: #fff; }
+  .primary-nav { z-index: 1001; }
+  .has-sub { display: flex; flex-wrap: wrap; align-items: center; }
+  .has-sub > a { flex: 1; }
+  .sub-toggle { display: block; width: 44px; height: 44px; border: 0; background: transparent; cursor: pointer; padding: 0; }
+  .sub-toggle::before { content: ""; display: block; width: 9px; height: 9px; margin: 0 auto; border-right: 2px solid var(--navy); border-bottom: 2px solid var(--navy); transform: rotate(45deg); transition: transform .2s; }
+  .has-sub.open > .sub-toggle::before { transform: rotate(-135deg); }
+  .has-sub > .sub, .has-sub > .sub-wide { display: none; width: 100%; }
+  .has-sub.open > .sub, .has-sub.open > .sub-wide { display: block; }
+  .sub a { padding: 11px 12px; }
+}
